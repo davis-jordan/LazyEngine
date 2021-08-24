@@ -4,11 +4,13 @@ import Engine from './LazyEngine/Engine.js'
 // // Setup
 const engine = new Engine();
 engine.setFPS(42);
+engine.setCanvasWidth(800)
+engine.setCanvasHeight(480)
 
 // Bird
 const birdX = 0;
 const birdY = 200;
-const birdWidth = 24;
+const birdWidth = 30;
 const birdHeight = 24;
 
 const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
@@ -25,7 +27,7 @@ const bestScoreY = 50;
 let bestScore = 0;
 
 // Pipes
-let pipeX = 400;
+let pipeX = engine.getCanvasWidth();
 const pipeGap = 100;
 const pipeWidth = 50;
 const pipeHeight = 400;
@@ -51,8 +53,8 @@ const drawPipe = () => {
 
   if (currPipeX < -pipeWidth) { 
     // wrap pipe around screen
-    pipeTopSprite.setX(canvasSize);
-    pipeBottomSprite.setX(canvasSize);
+    pipeTopSprite.setX(engine.getCanvasWidth());
+    pipeBottomSprite.setX(engine.getCanvasWidth());
 
     const canvasHeight = engine.getCanvasHeight();
     const pipeBottomY = getRandomNumberInRange(canvasHeight * 0.15, canvasHeight * 0.85 - pipeGap);
@@ -61,6 +63,14 @@ const drawPipe = () => {
     pipeBottomSprite.setY(pipeBottomY + pipeGap);
   }
 };
+
+const drawGround = () => {
+  const groundHeight = engine.getCanvasHeight() * 0.2;
+  engine.setFillColor('SandyBrown');
+  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight)
+  engine.setFillColor('SaddleBrown');
+  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.25)
+}
 
 const detectCollisions = () => {
   return (birdSprite.isTouching(pipeTopSprite) || birdSprite.isTouching(pipeBottomSprite) 
@@ -71,17 +81,16 @@ const endGame = () => {
   birdSprite.setDY(0);
   birdSprite.setY(200);
 
-  pipeBottomSprite.setX(canvasSize);
-  pipeTopSprite.setX(canvasSize);
+  pipeBottomSprite.setX(engine.getCanvasWidth());
+  pipeTopSprite.setX(engine.getCanvasWidth());
 
   score = 0; // Bird died
 }
 
-const canvasSize = 400;
-
 engine.loop(() => {
   engine.setBackgroundColor('skyblue');
   
+  drawGround();
   drawPipe();
   drawScore();
   if (detectCollisions()) {
