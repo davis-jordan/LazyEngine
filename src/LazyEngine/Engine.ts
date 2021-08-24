@@ -48,13 +48,24 @@ class Engine {
     this.setFillColor(prevFillColor);
   }
 
+  setFillColor = (color: string|CanvasGradient|CanvasPattern) => {
+    this.context.fillStyle = color;
+  }
+
+  setCanvasWidth = (width: number) => {
+    this.canvas.width = width;
+  }
+
+  setCanvasHeight = (height: number) => {
+    this.canvas.height = height;
+  }
+
   // Getters ----------------------------------------------------------------------
   getContext = () => this.context;
 
+  getCanvasWidth = () => this.canvas.width;
 
-  setFillColor = (color: string | CanvasGradient | CanvasPattern) => {
-    this.context.fillStyle = color;
-  }
+  getCanvasHeight = () => this.canvas.height;
 
   // Shpaes ------------------------------------------------------------------------
   rect = (x: number, y: number, width: number, height: number) => {
@@ -66,6 +77,11 @@ class Engine {
     const newSprite = new Sprite(this.context, image, width, height, startX, startY)
     this.sprites.push(newSprite);
     return newSprite;
+  }
+
+  isTouchingWalls = (sprite: Sprite) => {
+    return (sprite.getX() < 0 || (sprite.getX() + sprite.getWidth()) > this.canvas.width ||
+           sprite.getY() < 0 || (sprite.getY() + sprite.getHeight()) > this.canvas.height)
   }
 
   // Text ------------------------------------------------------------------------

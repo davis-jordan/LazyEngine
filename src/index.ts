@@ -1,3 +1,4 @@
+import {getRandomNumberInRange} from './helpers/getRandomNumberInRange.js';
 import Engine from './LazyEngine/Engine.js'
 
 // // Setup
@@ -5,8 +6,8 @@ const engine = new Engine();
 engine.setFPS(42);
 
 // Bird
-let birdX = 0;
-let birdY = 200;
+const birdX = 0;
+const birdY = 200;
 const birdWidth = 24;
 const birdHeight = 24;
 
@@ -25,15 +26,14 @@ let bestScore = 0;
 
 // Pipes
 let pipeX = 400;
-let pipeY = 200;
-const pipeGap = 200;
+const pipeGap = 100;
 const pipeWidth = 50;
 const pipeHeight = 400;
-let topPipeBottomY = 24;
+let topPipeBottomY = 100;
 
 // Pipes
-// const pipeTopSprite = engine.createSprite('./assets/pipeTop.png', pipeWidth, pipeHeight, pipeX - 200, pipeY);
-// const pipeBottomSprite = engine.createSprite('./assets/pipeBottom.png', pipeWidth, pipeHeight, pipeX - 200, pipeY);
+const pipeTopSprite = engine.createSprite('./assets/pipeTop.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY - pipeHeight);
+const pipeBottomSprite = engine.createSprite('./assets/pipeBottom.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY + pipeGap);
 
 const drawScore = () => {
   engine.setFillColor("black");
@@ -45,28 +45,35 @@ const drawScore = () => {
 
 
 const drawPipe = () => {
-  engine.setFillColor("green");
-  pipeX -= 8; // Move pipe
-  if (pipeX < -pipeWidth) { // Pipe off screen
-    pipeX = canvasSize; // Move pipe to end of screen
-    topPipeBottomY = pipeGap * Math.random(); // Randomize gap.
-  }
+  const currPipeX = pipeTopSprite.getX();
+  pipeTopSprite.setX(currPipeX - 8);
+  pipeBottomSprite.setX(currPipeX - 8);
 
-  engine.rect(pipeX, 0, pipeWidth, topPipeBottomY) // Draw top pipe
-  engine.rect(pipeX, topPipeBottomY + pipeGap, pipeWidth, canvasSize) // Draw bottom pipe
+  if (currPipeX < -pipeWidth) { 
+    // wrap pipe around screen
+    pipeTopSprite.setX(canvasSize);
+    pipeBottomSprite.setX(canvasSize);
+
+    const canvasHeight = engine.getCanvasHeight();
+    const pipeBottomY = getRandomNumberInRange(canvasHeight * 0.15, canvasHeight * 0.85 - pipeGap);
+
+    pipeTopSprite.setY(pipeBottomY - pipeHeight);
+    pipeBottomSprite.setY(pipeBottomY + pipeGap);
+  }
 };
 
 const detectCollisions = () => {
-  // Detect Collisions or fall off screen
-  return ((birdSprite.getY() < topPipeBottomY || birdSprite.getY() > topPipeBottomY + pipeGap) && 
-    pipeX < birdSprite.getWidth() || birdSprite.getY() > canvasSize);
+  return (birdSprite.isTouching(pipeTopSprite) || birdSprite.isTouching(pipeBottomSprite) 
+          || birdSprite.isTouching(pipeBottomSprite) || engine.isTouchingWalls(birdSprite));
 }
 
 const endGame = () => {
   birdSprite.setDY(0);
   birdSprite.setY(200);
 
-  pipeX = canvasSize; 
+  pipeBottomSprite.setX(canvasSize);
+  pipeTopSprite.setX(canvasSize);
+
   score = 0; // Bird died
 }
 

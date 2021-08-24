@@ -38,6 +38,12 @@ class Sprite {
     this.context.drawImage(this.sprite, this.x, this.y, this.width, this.height);
   }
 
+  isTouching(sprite: Sprite) {
+   if (this.x >= sprite.getX() + sprite.getWidth()|| this.x + this.width <= sprite.getX()) return false; // too far to the side
+   if (this.y >= sprite.getY() + sprite.getHeight() || this.y + this.height <= sprite.getY()) return false; // too far above/below
+   return true;   
+  }
+
   // Getters ----------------------------------------------------------------------
   getX = () => this.x;
 
