@@ -1,2 +1,2 @@
-export const getIntervalTimeFromFps = (fps:number) :number => 1000 / fps;
+export const getIntervalTimeFromFps = (fps: number) => 1000 / fps;
 

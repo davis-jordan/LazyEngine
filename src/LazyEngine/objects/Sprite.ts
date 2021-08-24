@@ -50,6 +50,7 @@ class Sprite {
   getY = () => this.y;
 
   getWidth = () => this.width;
+
   getHeight = () => this.height;
 
   // Setters ----------------------------------------------------------------------

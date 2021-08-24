@@ -1,4 +1,5 @@
 import { DEFAULT_FPS } from './constants/EngineConstants.js';
+import { getIntervalTimeFromFps } from './helpers/getIntervalTimeFromFps.js';
 import Sprite from './objects/Sprite.js';
 
 class Engine {
@@ -6,7 +7,7 @@ class Engine {
   context: CanvasRenderingContext2D;
   loopInterval: NodeJS.Timer | null;
   fps: number;
-  sprites: any[]; // TODO: change type
+  sprites: Sprite[]; 
 
   constructor() {
     this.canvas = (document.getElementById('c') as HTMLCanvasElement);
@@ -26,11 +27,16 @@ class Engine {
         sprite.draw();
         sprite.applyGravity();
       });
-    }, (1000/this.fps));
+    }, getIntervalTimeFromFps(this.fps));
   }
 
   addOnClickListner = (fn: () => void) => {
     this.canvas.addEventListener('click', fn, false);
+  }
+
+  addKeyDownListener = (fn: () => void) => {
+    console.log('hi');
+    this.canvas.addEventListener('keydown', () => console.log('test'), false);
   }
 
   // Setters ----------------------------------------------------------------------

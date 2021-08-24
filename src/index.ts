@@ -1,21 +1,31 @@
 import {getRandomNumberInRange} from './helpers/getRandomNumberInRange.js';
 import Engine from './LazyEngine/Engine.js'
 
-// // Setup
+// TODO: set z index of sprites to change render order
+// Setup
 const engine = new Engine();
 engine.setFPS(42);
-engine.setCanvasWidth(800)
+engine.setCanvasWidth(900)
 engine.setCanvasHeight(480)
 
+let gameInProgress = false;
+
+// Clouds
+const clouds = [
+  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth() * 0.33, 50),
+  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth() * 0.75, 100),
+  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth()*1.33, 200),
+];
+
 // Bird
-const birdX = 0;
-const birdY = 200;
+const birdX = engine.getCanvasWidth() * 0.03;
+const birdY = engine.getCanvasHeight() / 2;
 const birdWidth = 30;
 const birdHeight = 24;
 
 const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
-birdSprite.setGravity(0.5);
 engine.addOnClickListner(() => birdSprite.jump(9))
+engine.addKeyDownListener(() => console.log('test'))
 
 // Score
 const scoreX = 9;
@@ -46,7 +56,7 @@ const drawScore = () => {
 };
 
 
-const drawPipe = () => {
+const updatePipes = () => {
   const currPipeX = pipeTopSprite.getX();
   pipeTopSprite.setX(currPipeX - 8);
   pipeBottomSprite.setX(currPipeX - 8);
@@ -57,19 +67,34 @@ const drawPipe = () => {
     pipeBottomSprite.setX(engine.getCanvasWidth());
 
     const canvasHeight = engine.getCanvasHeight();
-    const pipeBottomY = getRandomNumberInRange(canvasHeight * 0.15, canvasHeight * 0.85 - pipeGap);
+    const pipeBottomY = getRandomNumberInRange(canvasHeight * 0.15, canvasHeight * 0.75 - pipeGap);
 
     pipeTopSprite.setY(pipeBottomY - pipeHeight);
     pipeBottomSprite.setY(pipeBottomY + pipeGap);
   }
 };
 
+const updateClouds = () => {
+  clouds.forEach((cloud) => {
+    const currCloudX = cloud.getX();
+    if (currCloudX + cloud.getWidth() < engine.getCanvasWidth() * -0.1) {
+      cloud.setX(engine.getCanvasWidth());
+    }
+    else {
+      cloud.setX(currCloudX - 2);
+    }
+  })
+
+};
+
 const drawGround = () => {
-  const groundHeight = engine.getCanvasHeight() * 0.2;
+  const groundHeight = engine.getCanvasHeight() * 0.15;
   engine.setFillColor('SandyBrown');
   engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight)
   engine.setFillColor('SaddleBrown');
   engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.25)
+  engine.setFillColor('green');
+  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.05)
 }
 
 const detectCollisions = () => {
@@ -77,24 +102,47 @@ const detectCollisions = () => {
           || birdSprite.isTouching(pipeBottomSprite) || engine.isTouchingWalls(birdSprite));
 }
 
+
+
+const startGame = () => {
+  birdSprite.setGravity(0.5);
+  birdSprite.setDY(0);
+  gameInProgress = true;
+
+}
+
 const endGame = () => {
   birdSprite.setDY(0);
   birdSprite.setY(200);
+
+  birdSprite.setGravity(0);
+  birdSprite.setDY(0);
 
   pipeBottomSprite.setX(engine.getCanvasWidth());
   pipeTopSprite.setX(engine.getCanvasWidth());
 
   score = 0; // Bird died
+  gameInProgress = false;
 }
+
+engine.addOnClickListner(() => {
+  if (!gameInProgress) {
+    startGame();
+  }
+});
 
 engine.loop(() => {
   engine.setBackgroundColor('skyblue');
   
   drawGround();
-  drawPipe();
-  drawScore();
-  if (detectCollisions()) {
-    endGame();
+  updateClouds();
+
+  if (gameInProgress) {
+    updatePipes();
+    drawScore();
+    if (detectCollisions()) {
+      endGame();
+    }
   }
 });
 
