@@ -5,11 +5,11 @@ import Sprite from './objects/Sprite.js';
 // TODO: refactor to be singleton or namespace
 
 class Engine {
-  canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
-  loopInterval: NodeJS.Timer | null;
-  fps: number;
-  sprites: Sprite[]; 
+  private canvas: HTMLCanvasElement;
+  private context: CanvasRenderingContext2D;
+  private loopInterval: NodeJS.Timer | null;
+  private fps: number;
+  private sprites: Sprite[]; 
 
   constructor() {
     this.canvas = (document.getElementById('c') as HTMLCanvasElement);
@@ -19,7 +19,7 @@ class Engine {
     this.sprites = [];
   }
 
-  loop = (fn: () => void) => {
+  public loop = (fn: () => void) => {
     if (this.loopInterval) {
       clearInterval(this.loopInterval);
     }
@@ -32,14 +32,14 @@ class Engine {
     }, getIntervalTimeFromFps(this.fps));
   }
 
-  addOnClickListner = (fn: () => void) => {
+  public addOnClickListner = (fn: () => void) => {
     window.addEventListener("click", (e) => {
       e.preventDefault();
       fn()
     });
   }
 
-  addKeyPressListener = (fn: () => void) => {
+  public addKeyPressListener = (fn: () => void) => {
     window.addEventListener("keypress", (e) => {
       e.preventDefault();
       fn()
@@ -47,11 +47,11 @@ class Engine {
   }
 
   // Setters ----------------------------------------------------------------------
-  setFPS = (fps: number) => {
+  public setFPS = (fps: number) => {
     this.fps = fps;
   }
 
-  setBackgroundColor = (color: string) => {
+  public setBackgroundColor = (color: string) => {
     const canvasWidth = this.canvas.width;
     const canvasHeight = this.canvas.height;
     const prevFillColor = this.context.fillStyle;
@@ -61,48 +61,48 @@ class Engine {
     this.setFillColor(prevFillColor);
   }
 
-  setFillColor = (color: string|CanvasGradient|CanvasPattern) => {
+  public setFillColor = (color: string|CanvasGradient|CanvasPattern) => {
     this.context.fillStyle = color;
   }
 
-  setCanvasWidth = (width: number) => {
+  public setCanvasWidth = (width: number) => {
     this.canvas.width = width;
   }
 
-  setCanvasHeight = (height: number) => {
+  public setCanvasHeight = (height: number) => {
     this.canvas.height = height;
   }
 
   // Getters ----------------------------------------------------------------------
-  getContext = () => this.context;
+  public getContext = () => this.context;
 
-  getCanvasWidth = () => this.canvas.width;
+  public getCanvasWidth = () => this.canvas.width;
 
-  getCanvasHeight = () => this.canvas.height;
+  public getCanvasHeight = () => this.canvas.height;
 
   // Shpaes ------------------------------------------------------------------------
-  rect = (x: number, y: number, width: number, height: number) => {
+  public rect = (x: number, y: number, width: number, height: number) => {
     this.context.fillRect(x, y, width, height); // Draw sky
   }
 
   // Sprites ------------------------------------------------------------------------
-  createSprite = (image: string, width: number, height: number, startX: number, startY: number) => {
+  public createSprite = (image: string, width: number, height: number, startX: number, startY: number) => {
     const newSprite = new Sprite(this.context, image, width, height, startX, startY)
     this.sprites.push(newSprite);
     return newSprite;
   }
 
-  addSprite = (sprite: Sprite) => {
+  public addSprite = (sprite: Sprite) => {
     this.sprites.push(sprite);
   }
 
-  isTouchingWalls = (sprite: Sprite) => {
+  public isTouchingWalls = (sprite: Sprite) => {
     return (sprite.getX() < 0 || (sprite.getX() + sprite.getWidth()) > this.canvas.width ||
            sprite.getY() < 0 || (sprite.getY() + sprite.getHeight()) > this.canvas.height)
   }
 
   // Text ------------------------------------------------------------------------
-  drawText = (text: string, x: number, y: number) => {
+  public drawText = (text: string, x: number, y: number) => {
   this.context.fillText(text, x, y); 
   }
 }

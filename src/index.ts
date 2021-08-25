@@ -1,6 +1,7 @@
 import { Engine } from './LazyEngine/index.js'
 import { Pipe } from './objects/index.js';
 import { PIPE_GAP, PIPE_WIDTH, PIPE_HEIGHT, TOP_PIPE_BOTTOM_Y } from './constants/PipeConstants.js'
+import Sound from './LazyEngine/audio/Sound.js';
 
 // TODO: set z index of sprites to change render order
 // Setup
@@ -28,6 +29,10 @@ const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeigh
 engine.addOnClickListner(() => birdSprite.jump(9));
 engine.addKeyPressListener(() => birdSprite.jump(9));
 
+
+// Sounds
+const pointSound = new Sound('./assets/point.mp3');
+const dieSound = new Sound('./assets/die.mp3');
 
 // Score
 const scoreX = 9;
@@ -101,8 +106,10 @@ const drawGround = () => {
 
 const updateScore = () => {
   pipeSprites.forEach((pipe) => {
-    if (birdSprite.getX() > pipe.getX() && birdSprite.getX() - pipe.getX() <= 8)
+    if (birdSprite.getX() > pipe.getX() && birdSprite.getX() - pipe.getX() <= 8) {
       score++;
+      pointSound.play()
+    }
   });
 }
 
@@ -129,6 +136,9 @@ const startGame = () => {
 }
 
 const endGame = () => {
+  pointSound.stop();
+  dieSound.play();
+
   birdSprite.setDY(0);
   birdSprite.setY(200);
 
