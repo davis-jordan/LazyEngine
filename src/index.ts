@@ -2,9 +2,6 @@ import { Engine } from './LazyEngine/index.js'
 import { Pipe } from './objects/index.js';
 import { PIPE_GAP, PIPE_WIDTH, PIPE_HEIGHT, TOP_PIPE_BOTTOM_Y } from './constants/PipeConstants.js'
 
-PIPE_HEIGHT
-
-
 // TODO: set z index of sprites to change render order
 // Setup
 const engine = new Engine();
@@ -101,9 +98,17 @@ const drawGround = () => {
   engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.05)
 }
 
+
+const updateScore = () => {
+  pipeSprites.forEach((pipe) => {
+    if (birdSprite.getX() > pipe.getX() && birdSprite.getX() - pipe.getX() <= 8)
+      score++;
+  });
+}
+
 const drawScore = () => {
   engine.setFillColor("black");
-  engine.drawText(String(score++), scoreX, scoreY); // Increase and draw score
+  engine.drawText(String(score), scoreX, scoreY); // Increase and draw score
 
   bestScore = bestScore < score ? score : bestScore; // New best score?
   engine.drawText(`Best: ${bestScore}`, bestScoreX, bestScoreY)
@@ -138,7 +143,7 @@ const endGame = () => {
 
 engine.addOnClickListner(() => {
   if (!gameInProgress) {
-    startGame();
+    startGame();;
   }
 });
 
@@ -156,10 +161,11 @@ engine.loop(() => {
 
   if (gameInProgress) {
     updatePipes();
-    drawScore();
+    updateScore();
     if (detectCollisions()) {
       endGame();
     }
   }
+  drawScore();
 });
 
