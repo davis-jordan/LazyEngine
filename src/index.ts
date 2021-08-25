@@ -1,5 +1,9 @@
-import {getRandomNumberInRange} from './helpers/getRandomNumberInRange.js';
-import Engine from './LazyEngine/Engine.js'
+import { Engine } from './LazyEngine/index.js'
+import { Pipe } from './objects/index.js';
+import { PIPE_GAP, PIPE_WIDTH, PIPE_HEIGHT, TOP_PIPE_BOTTOM_Y } from './constants/PipeConstants.js'
+
+PIPE_HEIGHT
+
 
 // TODO: set z index of sprites to change render order
 // Setup
@@ -25,7 +29,7 @@ const birdHeight = 24;
 
 const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
 engine.addOnClickListner(() => birdSprite.jump(9));
-engine.addKeyDownListener(() => birdSprite.jump(9));
+engine.addKeyPressListener(() => birdSprite.jump(9));
 
 
 // Score
@@ -39,40 +43,39 @@ let bestScore = 0;
 
 // Pipes
 let pipeX = engine.getCanvasWidth();
-const pipeGap = 100;
-const pipeWidth = 50;
-const pipeHeight = 400;
-let topPipeBottomY = 100;
+const pipeSprites: Pipe[] = [];
+const numPipes = 2;
+const pipeOffset = engine.getCanvasWidth() / 2;
 
-// Pipes
-const pipeTopSprite = engine.createSprite('./assets/pipeTop.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY - pipeHeight);
-const pipeBottomSprite = engine.createSprite('./assets/pipeBottom.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY + pipeGap);
+for (let i = 1; i <= numPipes; i++) {
+  const pipeSprite = new Pipe(engine.getContext(), engine, PIPE_WIDTH, PIPE_HEIGHT, (pipeX * (i / numPipes)) + pipeOffset, TOP_PIPE_BOTTOM_Y, PIPE_GAP)
 
-const drawScore = () => {
-  engine.setFillColor("black");
-  engine.drawText(String(score++), scoreX, scoreY); // Increase and draw score
+  pipeSprite.setRandomPipeGapPosition();
+  pipeSprites.push(pipeSprite);
+  engine.addSprite(pipeSprite.getTop());
+  engine.addSprite(pipeSprite.getBottom());
+}
 
-  bestScore = bestScore < score ? score : bestScore; // New best score?
-  engine.drawText(`Best: ${bestScore}`, bestScoreX, bestScoreY)
-};
-
+const resetPipes = (pipes: Pipe[]) => {
+  for (let i = 1; i <= pipes.length; i++) {
+    const pipe = pipes[i -1];
+    pipe.setX((pipeX * (i / numPipes)) + pipeOffset);
+    pipe.setRandomPipeGapPosition();
+  }
+}
 
 const updatePipes = () => {
-  const currPipeX = pipeTopSprite.getX();
-  pipeTopSprite.setX(currPipeX - 8);
-  pipeBottomSprite.setX(currPipeX - 8);
+  pipeSprites.forEach((pipe) => {
+    // Move horizontally
+    pipe.moveHorizontally(-8)
 
-  if (currPipeX < -pipeWidth) { 
     // wrap pipe around screen
-    pipeTopSprite.setX(engine.getCanvasWidth());
-    pipeBottomSprite.setX(engine.getCanvasWidth());
-
-    const canvasHeight = engine.getCanvasHeight();
-    const pipeBottomY = getRandomNumberInRange(canvasHeight * 0.15, canvasHeight * 0.75 - pipeGap);
-
-    pipeTopSprite.setY(pipeBottomY - pipeHeight);
-    pipeBottomSprite.setY(pipeBottomY + pipeGap);
-  }
+    if (pipe.getX() < (-1 * pipe.getWidth())) { 
+      pipe.top.setX(engine.getCanvasWidth());
+      pipe.bottom.setX(engine.getCanvasWidth());
+      pipe.setRandomPipeGapPosition();
+    }
+  })
 };
 
 const updateClouds = () => {
@@ -98,12 +101,20 @@ const drawGround = () => {
   engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.05)
 }
 
+const drawScore = () => {
+  engine.setFillColor("black");
+  engine.drawText(String(score++), scoreX, scoreY); // Increase and draw score
+
+  bestScore = bestScore < score ? score : bestScore; // New best score?
+  engine.drawText(`Best: ${bestScore}`, bestScoreX, bestScoreY)
+};
+
 const detectCollisions = () => {
-  return (birdSprite.isTouching(pipeTopSprite) || birdSprite.isTouching(pipeBottomSprite) 
-          || birdSprite.isTouching(pipeBottomSprite) || engine.isTouchingWalls(birdSprite));
+  return (pipeSprites.some((pipe) => {
+    return birdSprite.isTouching(pipe.top) || birdSprite.isTouching(pipe.bottom);
+  }) || engine.isTouchingWalls(birdSprite));
+
 }
-
-
 
 const startGame = () => {
   birdSprite.setGravity(0.5);
@@ -119,8 +130,7 @@ const endGame = () => {
   birdSprite.setGravity(0);
   birdSprite.setDY(0);
 
-  pipeBottomSprite.setX(engine.getCanvasWidth());
-  pipeTopSprite.setX(engine.getCanvasWidth());
+  resetPipes(pipeSprites);
 
   score = 0; // Bird died
   gameInProgress = false;
@@ -132,7 +142,7 @@ engine.addOnClickListner(() => {
   }
 });
 
-engine.addKeyDownListener(() => {
+engine.addKeyPressListener(() => {
   if (!gameInProgress) {
     startGame();
   }

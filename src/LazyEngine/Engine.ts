@@ -2,6 +2,8 @@ import { DEFAULT_FPS } from './constants/EngineConstants.js';
 import { getIntervalTimeFromFps } from './helpers/getIntervalTimeFromFps.js';
 import Sprite from './objects/Sprite.js';
 
+// TODO: refactor to be singleton or namespace
+
 class Engine {
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
@@ -37,8 +39,8 @@ class Engine {
     });
   }
 
-  addKeyDownListener = (fn: () => void) => {
-    window.addEventListener("keydown", (e) => {
+  addKeyPressListener = (fn: () => void) => {
+    window.addEventListener("keypress", (e) => {
       e.preventDefault();
       fn()
     });
@@ -88,6 +90,10 @@ class Engine {
     const newSprite = new Sprite(this.context, image, width, height, startX, startY)
     this.sprites.push(newSprite);
     return newSprite;
+  }
+
+  addSprite = (sprite: Sprite) => {
+    this.sprites.push(sprite);
   }
 
   isTouchingWalls = (sprite: Sprite) => {
