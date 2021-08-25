@@ -31,12 +31,17 @@ class Engine {
   }
 
   addOnClickListner = (fn: () => void) => {
-    this.canvas.addEventListener('click', fn, false);
+    window.addEventListener("click", (e) => {
+      e.preventDefault();
+      fn()
+    });
   }
 
   addKeyDownListener = (fn: () => void) => {
-    console.log('hi');
-    this.canvas.addEventListener('keydown', () => console.log('test'), false);
+    window.addEventListener("keydown", (e) => {
+      e.preventDefault();
+      fn()
+    });
   }
 
   // Setters ----------------------------------------------------------------------

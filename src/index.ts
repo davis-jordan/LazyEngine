@@ -5,7 +5,7 @@ import Engine from './LazyEngine/Engine.js'
 // Setup
 const engine = new Engine();
 engine.setFPS(42);
-engine.setCanvasWidth(900)
+engine.setCanvasWidth(880)
 engine.setCanvasHeight(480)
 
 let gameInProgress = false;
@@ -24,8 +24,9 @@ const birdWidth = 30;
 const birdHeight = 24;
 
 const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
-engine.addOnClickListner(() => birdSprite.jump(9))
-engine.addKeyDownListener(() => console.log('test'))
+engine.addOnClickListner(() => birdSprite.jump(9));
+engine.addKeyDownListener(() => birdSprite.jump(9));
+
 
 // Score
 const scoreX = 9;
@@ -126,6 +127,12 @@ const endGame = () => {
 }
 
 engine.addOnClickListner(() => {
+  if (!gameInProgress) {
+    startGame();
+  }
+});
+
+engine.addKeyDownListener(() => {
   if (!gameInProgress) {
     startGame();
   }
