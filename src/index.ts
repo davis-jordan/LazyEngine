@@ -12,6 +12,11 @@ engine.setCanvasHeight(480)
 
 let gameInProgress = false;
 
+// Sounds
+const pointSound = new Sound('./assets/point.mp3');
+const dieSound = new Sound('./assets/die.mp3');
+const flapSound = new Sound('./assets/flap.mp3');
+
 // Clouds
 const clouds = [
   engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth() * 0.33, 50),
@@ -26,13 +31,14 @@ const birdWidth = 30;
 const birdHeight = 24;
 
 const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
-engine.addOnClickListner(() => birdSprite.jump(9));
-engine.addKeyPressListener(() => birdSprite.jump(9));
 
+const jump = () => {
+  flapSound.play()
+  birdSprite.jump(9);
+};
 
-// Sounds
-const pointSound = new Sound('./assets/point.mp3');
-const dieSound = new Sound('./assets/die.mp3');
+engine.addOnClickListner(jump);
+engine.addKeyPressListener(jump);
 
 // Score
 const scoreX = 9;
@@ -94,13 +100,13 @@ const updateClouds = () => {
 };
 
 const drawGround = () => {
-  const groundHeight = engine.getCanvasHeight() * 0.15;
+  const groundHeight = engine.getCanvasHeight() * 0.05;
   engine.setFillColor('SandyBrown');
   engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight)
   engine.setFillColor('SaddleBrown');
-  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.25)
+  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.4)
   engine.setFillColor('green');
-  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.05)
+  engine.rect(0, engine.getCanvasHeight() - groundHeight, engine.getCanvasWidth(), groundHeight * 0.15)
 }
 
 
