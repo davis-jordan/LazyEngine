@@ -1,4 +1,4 @@
-import Pipe from './Pipe.js';
+import Pipe from './Pipe';
 
 export {
  Pipe,

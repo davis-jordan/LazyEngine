@@ -1,13 +1,13 @@
-import { DEFAULT_FPS } from './constants/EngineConstants.js';
-import { getIntervalTimeFromFps } from './helpers/getIntervalTimeFromFps.js';
-import Sprite from './objects/Sprite.js';
+import { DEFAULT_FPS } from './constants/EngineConstants';
+import { getIntervalTimeFromFps } from './helpers/getIntervalTimeFromFps';
+import Sprite from './objects/Sprite';
 
 // TODO: refactor to be singleton or namespace
 
 class Engine {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private loopInterval: NodeJS.Timer | null;
+  private loopInterval: number | null;
   private fps: number;
   private sprites: Sprite[]; 
 

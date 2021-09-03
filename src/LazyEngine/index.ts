@@ -1,5 +1,5 @@
-import Engine from './Engine.js';
-import Sprite from './objects/Sprite.js';
+import Engine from './Engine';
+import Sprite from './objects/Sprite';
 
 export {
   Engine,

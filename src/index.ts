@@ -1,7 +1,16 @@
-import { Engine } from './LazyEngine/index.js'
-import { Pipe } from './objects/index.js';
-import { PIPE_GAP, PIPE_WIDTH, PIPE_HEIGHT, TOP_PIPE_BOTTOM_Y } from './constants/PipeConstants.js'
-import Sound from './LazyEngine/audio/Sound.js';
+import { Engine } from './LazyEngine/index'
+import { Pipe } from './objects/index';
+import { PIPE_GAP, PIPE_WIDTH, PIPE_HEIGHT, TOP_PIPE_BOTTOM_Y } from './constants/PipeConstants'
+import Sound from './LazyEngine/audio/Sound';
+
+// Sounds
+import Point from './assets/point.mp3';
+import Die from './assets/die.mp3';
+import Flap from './assets/flap.mp3';
+
+// Images
+import Cloud from './assets/cloud.png'
+import Bird from './assets/Bird.png'
 
 // TODO: set z index of sprites to change render order
 // Setup
@@ -13,15 +22,15 @@ engine.setCanvasHeight(480)
 let gameInProgress = false;
 
 // Sounds
-const pointSound = new Sound('./assets/point.mp3');
-const dieSound = new Sound('./assets/die.mp3');
-const flapSound = new Sound('./assets/flap.mp3');
+const pointSound = new Sound(Point);
+const dieSound = new Sound(Die);
+const flapSound = new Sound(Flap);
 
 // Clouds
 const clouds = [
-  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth() * 0.33, 50),
-  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth() * 0.75, 100),
-  engine.createSprite('./assets/cloud.png', 100, 50, engine.getCanvasWidth()*1.33, 200),
+  engine.createSprite(Cloud, 100, 50, engine.getCanvasWidth() * 0.33, 50),
+  engine.createSprite(Cloud, 100, 50, engine.getCanvasWidth() * 0.75, 100),
+  engine.createSprite(Cloud, 100, 50, engine.getCanvasWidth()*1.33, 200),
 ];
 
 // Bird
@@ -30,7 +39,7 @@ const birdY = engine.getCanvasHeight() / 2;
 const birdWidth = 30;
 const birdHeight = 24;
 
-const birdSprite = engine.createSprite('./assets/bird.png', birdWidth, birdHeight, birdX, birdY);
+const birdSprite = engine.createSprite(Bird, birdWidth, birdHeight, birdX, birdY);
 
 const jump = () => {
   flapSound.play()

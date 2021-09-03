@@ -1,5 +1,7 @@
-import { getRandomNumberInRange } from '../helpers/getRandomNumberInRange.js';
-import { Engine, Sprite } from '../LazyEngine/index.js';
+import { getRandomNumberInRange } from '../helpers/getRandomNumberInRange';
+import { Engine, Sprite } from '../LazyEngine/index';
+import PipeTopImage from '../assets/pipeTop.png';
+import PipeBottomImage from '../assets/pipeBottom.png';
 
 getRandomNumberInRange
 class Pipe {
@@ -10,8 +12,8 @@ class Pipe {
   pipeGap: number;
 
   constructor(context: CanvasRenderingContext2D, engine: Engine, pipeWidth: number, pipeHeight: number, pipeX: number, topPipeBottomY: number, pipeGap: number) {
-    this.top = new Sprite(context, '../assets/pipeTop.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY - pipeHeight);
-    this.bottom = new Sprite(context, '../assets/pipeBottom.png', pipeWidth, pipeHeight, pipeX, topPipeBottomY + pipeGap);
+    this.top = new Sprite(context, PipeTopImage, pipeWidth, pipeHeight, pipeX, topPipeBottomY - pipeHeight);
+    this.bottom = new Sprite(context, PipeBottomImage, pipeWidth, pipeHeight, pipeX, topPipeBottomY + pipeGap);
     this.engine = engine;
     this.pipeHeight = pipeHeight;
     this.pipeGap = pipeGap;
